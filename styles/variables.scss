@@ -1,0 +1,97 @@
+// 🎨 设计系统 - 颜色变量
+$yu-brand: #ccf381;
+$yu-brand-dark: #accf60;
+$yu-black: #1a1a1a;
+$yu-gray: #666666;
+$yu-light-gray: #999999;
+$yu-bg: #f3f4f6;
+$yu-white: #ffffff;
+
+// 状态颜色
+$success: #10b981;
+$warning: #f59e0b;
+$error: #ef4444;
+$info: #3b82f6;
+
+// 渐变色
+$gradient-brand: linear-gradient(135deg, #{$yu-brand} 0%, #{$yu-brand-dark} 100%);
+$gradient-dark: linear-gradient(135deg, #{$yu-black} 0%, #2d2d2d 100%);
+
+// 🔢 尺寸系统
+$safe-area-top: env(safe-area-inset-top);
+$safe-area-bottom: env(safe-area-inset-bottom);
+
+// 间距系统 (8px 基准)
+$spacing-xs: 8rpx;   // 4px
+$spacing-sm: 16rpx;  // 8px
+$spacing-md: 24rpx;  // 12px
+$spacing-lg: 32rpx;  // 16px
+$spacing-xl: 48rpx;  // 24px
+$spacing-2xl: 64rpx; // 32px
+$spacing-3xl: 96rpx; // 48px
+
+// 圆角系统
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+$radius-2xl: 48rpx;
+$radius-3xl: 64rpx;
+$radius-full: 50%;
+
+// 字体系统
+$font-xs: 20rpx;   // 10px
+$font-sm: 24rpx;   // 12px
+$font-base: 28rpx; // 14px
+$font-lg: 32rpx;   // 16px
+$font-xl: 36rpx;   // 18px
+$font-2xl: 48rpx;  // 24px
+$font-3xl: 60rpx;  // 30px
+$font-4xl: 72rpx;  // 36px
+
+// 字重
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+$font-black: 900;
+
+// 阴影系统
+$shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 16rpx 64rpx rgba(0, 0, 0, 0.16);
+
+// 品牌阴影
+$shadow-brand: 0 4rpx 14rpx rgba(204, 243, 129, 0.2);
+$shadow-brand-lg: 0 8rpx 32rpx rgba(204, 243, 129, 0.3);
+
+// Z-index 层级
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-fixed: 300;
+$z-modal-backdrop: 400;
+$z-modal: 500;
+$z-popover: 600;
+$z-tooltip: 700;
+$z-toast: 800;
+
+// 动画时长
+$duration-fast: 0.15s;
+$duration-normal: 0.3s;
+$duration-slow: 0.5s;
+
+// 缓动函数
+$ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+$ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+// 毛玻璃效果
+$glass-light: rgba(255, 255, 255, 0.8);
+$glass-dark: rgba(26, 26, 26, 0.8);
+$blur: blur(20rpx);
+
+// 布局尺寸
+$header-height: 160rpx;
+$tabbar-height: 160rpx;
+$container-padding: 40rpx;

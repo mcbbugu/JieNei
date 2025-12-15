@@ -1,0 +1,256 @@
+// 🎯 Mixins - 可复用样式
+
+// 毛玻璃效果
+@mixin glass($background: $glass-light) {
+  background: $background;
+  backdrop-filter: $blur;
+  -webkit-backdrop-filter: $blur;
+}
+
+// 渐变背景
+@mixin gradient($gradient: $gradient-brand) {
+  background: $gradient;
+}
+
+// 阴影效果
+@mixin shadow($level: 'md') {
+  @if $level == 'sm' {
+    box-shadow: $shadow-sm;
+  } @else if $level == 'md' {
+    box-shadow: $shadow-md;
+  } @else if $level == 'lg' {
+    box-shadow: $shadow-lg;
+  } @else if $level == 'xl' {
+    box-shadow: $shadow-xl;
+  } @else if $level == 'brand' {
+    box-shadow: $shadow-brand;
+  } @else if $level == 'brand-lg' {
+    box-shadow: $shadow-brand-lg;
+  }
+}
+
+// 居中布局
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 垂直居中
+@mixin flex-center-y {
+  display: flex;
+  align-items: center;
+}
+
+// 水平居中
+@mixin flex-center-x {
+  display: flex;
+  justify-content: center;
+}
+
+// 两端对齐
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 文字省略
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $lines;
+    overflow: hidden;
+  }
+}
+
+// 按钮基础样式
+@mixin button-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-lg $spacing-xl;
+  border-radius: $radius-xl;
+  font-size: $font-base;
+  font-weight: $font-semibold;
+  transition: all $duration-normal $ease-out;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 主要按钮
+@mixin button-primary {
+  @include button-base;
+  background: $yu-black;
+  color: $yu-brand;
+  @include shadow('brand');
+  
+  &:active {
+    @include shadow('brand-lg');
+  }
+  
+  &:disabled {
+    background: #f5f5f5;
+    color: $yu-light-gray;
+    box-shadow: none;
+    cursor: not-allowed;
+    
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// 次要按钮
+@mixin button-secondary {
+  @include button-base;
+  background: #f5f5f5;
+  color: $yu-gray;
+  border: 2rpx solid #e5e5e5;
+  
+  &:active {
+    background: #e5e5e5;
+  }
+}
+
+// 卡片样式
+@mixin card($padding: $spacing-xl) {
+  background: $yu-white;
+  border-radius: $radius-3xl;
+  padding: $padding;
+  @include shadow('sm');
+  border: 2rpx solid transparent;
+  transition: all $duration-normal $ease-out;
+  
+  &:active {
+    transform: scale(0.99);
+    @include shadow('md');
+    border-color: rgba($yu-brand, 0.3);
+  }
+}
+
+// 头像样式
+@mixin avatar($size: 88rpx) {
+  width: $size;
+  height: $size;
+  border-radius: $radius-xl;
+  @include flex-center;
+  font-weight: $font-bold;
+  @include shadow('sm');
+  flex-shrink: 0;
+}
+
+// 徽章样式
+@mixin badge($background: $error) {
+  background: $background;
+  color: $yu-white;
+  font-size: $font-xs;
+  font-weight: $font-bold;
+  border-radius: $radius-full;
+  @include flex-center;
+  min-width: 36rpx;
+  height: 36rpx;
+  padding: 0 $spacing-xs;
+}
+
+// 输入框样式
+@mixin input-base {
+  background: #f5f5f5;
+  border-radius: $radius-2xl;
+  padding: $spacing-lg $spacing-xl;
+  font-size: $font-base;
+  color: $yu-black;
+  border: 2rpx solid transparent;
+  transition: all $duration-normal $ease-out;
+  
+  &:focus {
+    background: $yu-white;
+    border-color: $yu-brand;
+    @include shadow('brand');
+  }
+  
+  &::placeholder {
+    color: $yu-light-gray;
+  }
+}
+
+// 标签样式
+@mixin tag($background: rgba($yu-brand, 0.1), $color: $yu-brand-dark) {
+  background: $background;
+  color: $color;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: $font-semibold;
+}
+
+// 加载骨架屏
+@mixin skeleton {
+  background: #f0f0f0;
+  border-radius: $radius-md;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// 响应式断点
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}
+
+// 安全区域适配
+@mixin safe-area-top($additional: 0) {
+  padding-top: calc(#{$safe-area-top} + #{$additional});
+}
+
+@mixin safe-area-bottom($additional: 0) {
+  padding-bottom: calc(#{$safe-area-bottom} + #{$additional});
+}
+
+// 固定头部
+@mixin fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky;
+  @include glass;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+// 主内容区域
+@mixin main-content($header-height: $header-height, $tabbar-height: $tabbar-height) {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  padding-top: $header-height;
+  padding-bottom: $tabbar-height;
+}

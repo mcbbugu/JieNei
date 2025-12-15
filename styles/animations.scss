@@ -1,0 +1,265 @@
+// 🎬 动画库
+
+// 淡入动画
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s $ease-out;
+}
+
+// 滑入动画
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s $ease-out;
+}
+
+// 缩放动画
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s $ease-out;
+}
+
+// 脉冲动画
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s $ease-in-out infinite;
+}
+
+// 弹跳动画
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -6rpx, 0);
+  }
+  70% {
+    transform: translate3d(0, -3rpx, 0);
+  }
+  90% {
+    transform: translate3d(0, -1rpx, 0);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+// 旋转动画
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// 脉冲环动画
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2s infinite;
+}
+
+// 导航弹跳动画
+@keyframes nav-bounce {
+  0% { transform: rotate(-6deg) scale(0.8); }
+  50% { transform: rotate(-6deg) scale(1.2); }
+  100% { transform: rotate(-6deg) scale(1.1); }
+}
+
+.nav-bounce {
+  animation: nav-bounce 0.3s $ease-out;
+}
+
+// 图表柱状图生长动画
+@keyframes chart-bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.chart-bar-grow {
+  animation: chart-bar-grow 0.8s $ease-out forwards;
+  transform-origin: bottom;
+}
+
+// 呼吸灯效果
+@keyframes breathing {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.animate-breathing {
+  animation: breathing 3s $ease-in-out infinite;
+}
+
+// 摇摆动画
+@keyframes wiggle {
+  0%, 7% { transform: rotateZ(0); }
+  15% { transform: rotateZ(-15deg); }
+  20% { transform: rotateZ(10deg); }
+  25% { transform: rotateZ(-10deg); }
+  30% { transform: rotateZ(6deg); }
+  35% { transform: rotateZ(-4deg); }
+  40%, 100% { transform: rotateZ(0); }
+}
+
+.animate-wiggle {
+  animation: wiggle 1s $ease-in-out;
+}
+
+// 心跳动画
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.3); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.3); }
+  70% { transform: scale(1); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s $ease-in-out infinite;
+}
+
+// 渐变背景动画
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  background: linear-gradient(-45deg, $yu-brand, $yu-brand-dark, $yu-brand, $yu-brand-dark);
+  background-size: 400% 400%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+// 悬浮动画
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10rpx); }
+}
+
+.animate-float {
+  animation: float 3s $ease-in-out infinite;
+}
+
+// 点击反馈动画
+.tap-feedback {
+  transition: transform $duration-fast $ease-out;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// 加载动画
+.loading-dots {
+  display: inline-flex;
+  gap: 4rpx;
+  
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 4rpx;
+    height: 4rpx;
+    border-radius: 50%;
+    background: currentColor;
+    animation: loading-dots 1.4s infinite both;
+  }
+  
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 4rpx;
+    height: 4rpx;
+    border-radius: 50%;
+    background: currentColor;
+    animation: loading-dots 1.4s infinite both;
+    animation-delay: -0.16s;
+  }
+}
+
+@keyframes loading-dots {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 扩散动画 (ping)
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+// 旋转动画 (用于刷新按钮)
+.animate-rotate {
+  animation: spin 0.8s linear;
+}
+
+// 卡片悬停动画
+.animate-card {
+  transition: all 0.3s ease-out;
+  
+  &:hover {
+    transform: translateY(-4rpx);
+    box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.1);
+  }
+}

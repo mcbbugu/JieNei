@@ -1,0 +1,94 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "界内",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/dashboard/dashboard",
+			"style": {
+				"navigationBarTitleText": "附近局",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/community/community",
+			"style": {
+				"navigationBarTitleText": "广场",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/playtimer/playtimer",
+			"style": {
+				"navigationBarTitleText": "记录",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "名片",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/assessment/assessment",
+			"style": {
+				"navigationBarTitleText": "等级评测",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/icon-preview/icon-preview",
+			"style": {
+				"navigationBarTitleText": "图标预览",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/test-icons/test-icons",
+			"style": {
+				"navigationBarTitleText": "图标测试",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/simple-test/simple-test",
+			"style": {
+				"navigationBarTitleText": "简单测试",
+				"navigationBarBackgroundColor": "#F8F8F8"
+			}
+		}
+	],
+	"tabBar": {
+		"custom": true,
+		"color": "#999999",
+		"selectedColor": "#ccf381",
+		"backgroundColor": "#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/dashboard/dashboard",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/profile/profile",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "界内",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
