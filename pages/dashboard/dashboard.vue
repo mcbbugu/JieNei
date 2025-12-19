@@ -30,7 +30,7 @@
           </view>
 
           <!-- 发布状态按钮 -->
-          <view class="status-btn-wrapper" @click.stop="handlePublishClick">
+          <view class="status-btn-wrapper">
             <view 
               class="status-btn"
               :class="{ 
@@ -38,17 +38,10 @@
                 active: myStatus !== 'IDLE',
                 [getStatusBgClass()]: myStatus !== 'IDLE'
               }"
+              @click="handlePublishClick"
             >
-              <view class="status-icon-wrapper" :class="{ active: myStatus !== 'IDLE' }">
-                <YuIcon 
-                  :name="getStatusIcon()" 
-                  :size="28" 
-                  :color="myStatus === 'IDLE' ? '#9ca3af' : getStatusIconColor()"
-                />
-              </view>
-              <text class="status-text" :class="{ active: myStatus !== 'IDLE' }">
-                {{ getStatusLabel() }}
-              </text>
+              <YuIcon name="Plus" :size="32" color="#1a1a1a" />
+              <text class="status-text">发布状态</text>
             </view>
 
             <!-- 状态菜单 -->
@@ -412,9 +405,12 @@ export default {
 
     // 处理发布状态点击
     handlePublishClick() {
+      console.log('handlePublishClick called, myStatus:', this.myStatus)
       if (this.myStatus === 'IDLE') {
+        console.log('Opening publish modal')
         this.showPublishModal = true
       } else {
+        console.log('Toggling status menu')
         this.showStatusMenu = !this.showStatusMenu
       }
     },
@@ -821,76 +817,59 @@ export default {
 .status-btn {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  padding-left: 16rpx;
-  padding-right: 24rpx;
-  padding-top: 12rpx;
-  padding-bottom: 12rpx;
+  gap: 8rpx;
+  padding: 12rpx 24rpx 12rpx 16rpx;
+  background: white;
+  border: 2rpx solid rgba(0, 0, 0, 0.08);
   border-radius: 50rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-  transition: all $duration-normal $ease-out;
-
-  &.idle {
-    background: white;
-  }
-
-  &.bg-brand {
-    background: #ccf381;
-    border-color: #ccf381;
-  }
-
-  &.bg-playing {
-    background: #ef4444;
-    border-color: #ef4444;
-  }
-
-  &.bg-resting {
-    background: #9ca3af;
-    border-color: #9ca3af;
-  }
-
-  &.bg-social {
-    background: #6366f1;
-    border-color: #6366f1;
-  }
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
 
   &:active {
     transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.95);
   }
-}
-
-.status-icon-wrapper {
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
 
   &.active {
-    background: rgba(255, 255, 255, 0.2);
+    &.bg-brand {
+      background: #ccf381;
+      border-color: #ccf381;
+    }
+
+    &.bg-playing {
+      background: #ef4444;
+      border-color: #ef4444;
+    }
+
+    &.bg-resting {
+      background: #9ca3af;
+      border-color: #9ca3af;
+    }
+
+    &.bg-social {
+      background: #6366f1;
+      border-color: #6366f1;
+    }
   }
 }
 
 .status-text {
   font-size: 24rpx;
   font-weight: 700;
-  color: #6b7280;
+  color: #9ca3af;
 
   &.active {
     color: #1a1a1a;
   }
 }
 
-.bg-brand .status-text.active {
+.bg-brand .status-text {
   color: #1a1a1a;
 }
 
-.bg-playing .status-text.active,
-.bg-resting .status-text.active,
-.bg-social .status-text.active {
+.bg-playing .status-text,
+.bg-resting .status-text,
+.bg-social .status-text {
   color: white;
 }
 
