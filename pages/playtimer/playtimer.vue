@@ -43,11 +43,15 @@
     <!-- 全屏历史记录 -->
     <HistoryModal v-if="viewMode === 'HISTORY'" :records="MOCK_HISTORY" :selected="selectedRecord"
       @close="viewMode = 'TIMER'" @select="selectRecord" />
+
+    <!-- 底部导航 -->
+    <YuTabBar :current="2" />
   </view>
 </template>
 
 <script>
 import YuIcon from '@/components/YuIcon/YuIcon.vue'
+import YuTabBar from '@/components/YuTabBar/YuTabBar.vue'
 import TimerOrb from './components/TimerOrb.vue'
 import StatItem from './components/StatItem.vue'
 import HistoryPreview from './components/HistoryPreview.vue'
@@ -65,6 +69,7 @@ export default {
   name: 'PlayTimer',
   components: {
     YuIcon,
+    YuTabBar,
     TimerOrb,
     StatItem,
     HistoryPreview,
@@ -101,10 +106,7 @@ export default {
     this.initLayout()
   },
   onShow() {
-    // 更新 tabBar 状态
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 })
-    }
+    // TabBar 状态由 YuTabBar 组件管理
   },
   onHide() {
     this.saveTimerState()

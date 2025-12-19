@@ -42,12 +42,16 @@
 
     <!-- Toast 提示 -->
     <YuToast v-if="toast.visible" :message="toast.msg" :type="toast.type" @close="toast.visible = false" />
+
+    <!-- 底部导航 -->
+    <YuTabBar :current="1" />
   </view>
 </template>
 
 <script>
 import YuButton from '@/components/YuButton/YuButton.vue'
 import YuToast from '@/components/YuToast/YuToast.vue'
+import YuTabBar from '@/components/YuTabBar/YuTabBar.vue'
 import PostCard from './components/PostCard.vue'
 import PostSkeleton from './components/PostSkeleton.vue'
 import ComposeModal from './components/ComposeModal.vue'
@@ -111,6 +115,7 @@ export default {
   components: {
     YuButton,
     YuToast,
+    YuTabBar,
     PostCard,
     PostSkeleton,
     ComposeModal,
@@ -140,10 +145,7 @@ export default {
     this.loadPosts()
   },
   onShow() {
-    // 更新 tabBar 状态
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 })
-    }
+    // TabBar 状态由 YuTabBar 组件管理
   },
   methods: {
     async loadPosts() {

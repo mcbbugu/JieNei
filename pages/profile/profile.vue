@@ -159,12 +159,16 @@
 
     <!-- Toast 提示 -->
     <YuToast v-if="toast.visible" :message="toast.msg" :type="toast.type" @close="toast.visible = false" />
+
+    <!-- 底部导航 -->
+    <YuTabBar :current="3" />
   </view>
 </template>
 
 <script>
 import YuIcon from '@/components/YuIcon/YuIcon.vue'
 import YuToast from '@/components/YuToast/YuToast.vue'
+import YuTabBar from '@/components/YuTabBar/YuTabBar.vue'
 import RadarChart from './components/RadarChart.vue'
 import BallVault from './components/BallVault.vue'
 import GearLocker from './components/GearLocker.vue'
@@ -180,6 +184,7 @@ export default {
   components: {
     YuIcon,
     YuToast,
+    YuTabBar,
     RadarChart,
     BallVault,
     GearLocker,
@@ -289,10 +294,7 @@ export default {
     this.initLayout()
   },
   onShow() {
-    // 更新 tabBar 状态
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 3 })
-    }
+    // TabBar 状态由 YuTabBar 组件管理
   },
   methods: {
     initLayout() {

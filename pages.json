@@ -76,11 +76,19 @@
 		"list": [
 			{
 				"pagePath": "pages/dashboard/dashboard",
-				"text": "首页"
+				"text": "发现"
+			},
+			{
+				"pagePath": "pages/community/community",
+				"text": "广场"
+			},
+			{
+				"pagePath": "pages/playtimer/playtimer",
+				"text": "记录"
 			},
 			{
 				"pagePath": "pages/profile/profile",
-				"text": "我的"
+				"text": "名片"
 			}
 		]
 	},

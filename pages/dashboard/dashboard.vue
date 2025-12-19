@@ -156,15 +156,7 @@
     </view>
 
     <!-- 底部导航 -->
-    <view class="bottom-nav" :style="{ paddingBottom: (24 + safeAreaBottom) + 'rpx' }">
-      <view v-for="(item, index) in tabList" :key="index" class="nav-item" :class="{ active: currentTab === index }"
-        @click="switchTab(index)">
-        <view class="nav-icon" :class="{ active: currentTab === index }">
-          <YuIcon :name="item.icon" :size="48" :color="currentTab === index ? '#ccf381' : '#9ca3af'" />
-        </view>
-        <view v-if="currentTab === index" class="nav-dot"></view>
-      </view>
-    </view>
+    <YuTabBar :current="0" />
 
     <!-- Toast 提示 -->
     <view v-if="toast.visible" class="toast">
@@ -177,13 +169,15 @@
 <script>
 import YuIcon from '@/components/YuIcon/YuIcon.vue'
 import YuNavBar from '@/components/YuNavBar/YuNavBar.vue'
+import YuTabBar from '@/components/YuTabBar/YuTabBar.vue'
 import { generatePlayers, getIntentConfig } from '@/utils/constants.js'
 
 export default {
   name: 'Dashboard',
   components: {
     YuIcon,
-    YuNavBar
+    YuNavBar,
+    YuTabBar
   },
   data() {
     return {
@@ -191,7 +185,6 @@ export default {
       safeAreaBottom: 0,
       navBarHeight: 88, // 初始值改为 88px
       navOpacity: 0, // 导航栏透明度
-      currentTab: 0,
 
       // 数据状态
       allPlayers: [],
@@ -222,13 +215,6 @@ export default {
         visible: false
       },
 
-      // 导航配置
-      tabList: [
-        { icon: 'Radar', text: '发现' },
-        { icon: 'SquareIcon', text: '广场' },
-        { icon: 'Timer', text: '记录' },
-        { icon: 'User', text: '名片' }
-      ]
     }
   },
   computed: {
@@ -340,32 +326,6 @@ export default {
       const targetFilter = `Venue:${venueName}`
       this.activeFilter = this.activeFilter === targetFilter ? '全部' : targetFilter
       this.filterPlayers()
-    },
-
-    // 切换导航
-    switchTab(index) {
-      if (this.currentTab === index) return
-      this.currentTab = index
-
-      // 震动反馈
-      uni.vibrateShort({ type: 'light' })
-
-      // 页面跳转逻辑
-      const routes = [
-        '/pages/dashboard/dashboard',
-        '/pages/community/community',
-        '/pages/playtimer/playtimer',
-        '/pages/profile/profile'
-      ]
-
-      if (routes[index]) {
-        uni.switchTab({
-          url: routes[index],
-          fail: () => {
-            uni.redirectTo({ url: routes[index] })
-          }
-        })
-      }
     },
 
     // 处理发布状态点击
@@ -1151,54 +1111,6 @@ export default {
 
 .gear-divider {
   color: #d1d5db;
-}
-
-// 底部导航
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: space-around;
-  padding: 24rpx 40rpx;
-  max-width: 750rpx;
-  margin: 0 auto;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rpx;
-  width: 128rpx;
-}
-
-.nav-icon {
-  width: 80rpx;
-  height: 80rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-
-  &.active {
-    background: #1a1a1a;
-    transform: rotate(-10deg) scale(1.1);
-    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
-  }
-}
-
-.nav-dot {
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background: #1a1a1a;
 }
 
 // Toast
