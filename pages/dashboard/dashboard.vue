@@ -830,26 +830,24 @@ export default {
     background: rgba(255, 255, 255, 0.95);
   }
 
-  &.active {
-    &.bg-brand {
-      background: #ccf381;
-      border-color: #ccf381;
-    }
+  &.active.bg-brand {
+    background: #ccf381;
+    border-color: #ccf381;
+  }
 
-    &.bg-playing {
-      background: #ef4444;
-      border-color: #ef4444;
-    }
+  &.active.bg-playing {
+    background: #ef4444;
+    border-color: #ef4444;
+  }
 
-    &.bg-resting {
-      background: #9ca3af;
-      border-color: #9ca3af;
-    }
+  &.active.bg-resting {
+    background: #9ca3af;
+    border-color: #9ca3af;
+  }
 
-    &.bg-social {
-      background: #6366f1;
-      border-color: #6366f1;
-    }
+  &.active.bg-social {
+    background: #6366f1;
+    border-color: #6366f1;
   }
 }
 
