@@ -14,7 +14,7 @@
           <YuIcon name="Smartphone" :size="28" color="#1a1a1a" />
           <text class="spotting-text">举牌接头</text>
         </view> -->
-        
+
         <view class="top-actions">
           <view class="action-btn" @click="showShareCard = true">
             <YuIcon name="QrCode" :size="32" color="#fff" />
@@ -44,12 +44,7 @@
 
         <!-- 用户名和标题 -->
         <view class="user-info">
-          <input 
-            v-if="isEditing"
-            v-model="profile.name"
-            class="name-input"
-            placeholder="你的昵称"
-          />
+          <input v-if="isEditing" v-model="profile.name" class="name-input" placeholder="你的昵称" />
           <text v-else class="user-name">{{ profile.name }}</text>
           <text class="user-title">{{ profile.levelTitle }}</text>
         </view>
@@ -83,17 +78,13 @@
     </view>
 
     <!-- 滚动内容区域 -->
-    <scroll-view 
-      class="content-sheet" 
-      scroll-y 
-      :style="{ paddingBottom: tabBarHeight + 'px' }"
-    >
+    <scroll-view class="content-sheet" scroll-y :style="{ paddingBottom: tabBarHeight + 'px' }">
       <!-- 能力评测卡片 -->
       <view class="assessment-card" @click="goToAssessment">
         <view class="assessment-info">
-        <view class="assessment-icon">
-          <YuIcon name="Radar" :size="36" color="#1a1a1a" />
-        </view>
+          <view class="assessment-icon">
+            <YuIcon name="Radar" :size="36" color="#1a1a1a" />
+          </view>
           <view class="assessment-text">
             <text class="assessment-title">更新能力模型</text>
             <text class="assessment-subtitle">上次评测: 7天前</text>
@@ -122,12 +113,7 @@
               <text class="card-label">Bio</text>
               <YuIcon v-if="isEditing" name="Edit" :size="20" color="#ccf381" />
             </view>
-            <textarea 
-              v-if="isEditing"
-              v-model="profile.bio"
-              class="bio-input"
-              placeholder="写点什么..."
-            />
+            <textarea v-if="isEditing" v-model="profile.bio" class="bio-input" placeholder="写点什么..." />
             <text v-else class="bio-text">{{ profile.bio }}</text>
           </view>
 
@@ -141,12 +127,7 @@
                 微信号
                 <YuIcon v-if="privacyMode" name="Shield" :size="20" color="#10b981" />
               </text>
-              <YuIcon 
-                v-if="!privacyMode" 
-                name="QrCode" 
-                :size="28" 
-                color="#ccf381" 
-              />
+              <YuIcon v-if="!privacyMode" name="QrCode" :size="28" color="#ccf381" />
             </view>
             <text class="wechat-id">{{ displayWeChatId }}</text>
             <text class="wechat-action">{{ privacyMode ? '已隐藏' : '复制 ID' }}</text>
@@ -155,71 +136,29 @@
       </view>
 
       <!-- 球库统计 -->
-      <BallVault 
-        :stats="ballStats"
-        @click="showBallVault = true"
-        @add="handleAddBallUsage"
-      />
+      <BallVault :stats="ballStats" @click="showBallVault = true" @add="handleAddBallUsage" />
 
       <!-- 装备库 -->
-      <GearLocker 
-        :gear-list="gearList"
-        @add="showAddGear = true"
-      />
+      <GearLocker :gear-list="gearList" @add="showAddGear = true" />
 
       <!-- 球风标签 -->
-      <TagsSection 
-        :tags="tags"
-        :is-editing="isEditing"
-        @add="handleAddTag"
-        @remove="handleRemoveTag"
-      />
+      <TagsSection :tags="tags" :is-editing="isEditing" @add="handleAddTag" @remove="handleRemoveTag" />
     </scroll-view>
 
     <!-- 各种弹窗 -->
-    <SettingsModal
-      v-if="showSettings"
-      :is-editing="isEditing"
-      :privacy-mode="privacyMode"
-      @close="showSettings = false"
-      @toggle-edit="toggleEditMode"
-      @toggle-privacy="togglePrivacy"
-      @logout="handleLogout"
-    />
+    <SettingsModal v-if="showSettings" :is-editing="isEditing" :privacy-mode="privacyMode" @close="showSettings = false"
+      @toggle-edit="toggleEditMode" @toggle-privacy="togglePrivacy" @logout="handleLogout" />
 
-    <WeChatQRModal
-      v-if="showWeChatQR"
-      :profile="profile"
-      @close="showWeChatQR = false"
-    />
+    <WeChatQRModal v-if="showWeChatQR" :profile="profile" @close="showWeChatQR = false" />
 
-    <AddGearModal
-      v-if="showAddGear"
-      @close="showAddGear = false"
-      @submit="handleAddGear"
-    />
+    <AddGearModal v-if="showAddGear" @close="showAddGear = false" @submit="handleAddGear" />
 
-    <BallVaultModal
-      v-if="showBallVault"
-      :stats="ballStats"
-      @close="showBallVault = false"
-      @add="handleAddBallUsage"
-    />
+    <BallVaultModal v-if="showBallVault" :stats="ballStats" @close="showBallVault = false" @add="handleAddBallUsage" />
 
-    <ShareCardModal
-      v-if="showShareCard"
-      :profile="profile"
-      :gear-list="gearList"
-      @close="showShareCard = false"
-    />
+    <ShareCardModal v-if="showShareCard" :profile="profile" :gear-list="gearList" @close="showShareCard = false" />
 
     <!-- Toast 提示 -->
-    <YuToast 
-      v-if="toast.visible" 
-      :message="toast.msg"
-      :type="toast.type"
-      @close="toast.visible = false"
-    />
+    <YuToast v-if="toast.visible" :message="toast.msg" :type="toast.type" @close="toast.visible = false" />
   </view>
 </template>
 
@@ -259,15 +198,15 @@ export default {
       showAddGear: false,
       showBallVault: false,
       showShareCard: false,
-      
+
       // 编辑状态
       isEditing: false,
       privacyMode: false,
-      
+
       // 布局参数
       safeAreaTop: 0,
       tabBarHeight: 160,
-      
+
       // 用户资料
       profile: {
         name: '张大仙',
@@ -285,10 +224,10 @@ export default {
         },
         radar: [85, 60, 90, 75, 70] // 进攻、防守、网前、意识、体能
       },
-      
+
       // 球风标签
       tags: ['装备党', '周末战神', '接发球好', '脾气好'],
-      
+
       // 装备列表
       gearList: [
         {
@@ -320,7 +259,7 @@ export default {
           specs: 'EUR 42'
         }
       ],
-      
+
       // 球库数据
       ballStats: {
         totalUsed: 128,
@@ -330,7 +269,7 @@ export default {
           { date: '2023.10.22', count: 3, brand: 'Yonex AS-05' }
         ]
       },
-      
+
       // Toast 状态
       toast: {
         msg: '',
@@ -341,7 +280,7 @@ export default {
   },
   computed: {
     displayWeChatId() {
-      return this.privacyMode 
+      return this.privacyMode
         ? this.profile.wechatId.substring(0, 4) + '****'
         : this.profile.wechatId
     }
@@ -361,20 +300,20 @@ export default {
       this.safeAreaTop = systemInfo.safeAreaInsets?.top || 0
       this.tabBarHeight = 160 + (systemInfo.safeAreaInsets?.bottom || 0)
     },
-    
+
     // 编辑模式
     toggleEditMode() {
       this.isEditing = !this.isEditing
       this.showSettings = false
       this.showToast(this.isEditing ? '进入编辑模式' : '退出编辑模式', 'info')
     },
-    
+
     // 隐私模式
     togglePrivacy() {
       this.privacyMode = !this.privacyMode
       this.showToast(this.privacyMode ? '已开启隐私保护' : '已关闭隐私保护', 'info')
     },
-    
+
     // 标签管理
     handleAddTag() {
       const newTags = ['暴力后场', '网前雨刷', '步伐灵活', '战术大师']
@@ -384,13 +323,13 @@ export default {
         this.showToast(`添加标签: ${randomTag}`, 'success')
       }
     },
-    
+
     handleRemoveTag(index) {
       const removedTag = this.tags[index]
       this.tags.splice(index, 1)
       this.showToast(`移除标签: ${removedTag}`, 'info')
     },
-    
+
     // 装备管理
     handleAddGear(gearData) {
       const newGear = {
@@ -401,7 +340,7 @@ export default {
       this.gearList.unshift(newGear)
       this.showToast('装备添加成功', 'success')
     },
-    
+
     // 球库管理
     handleAddBallUsage() {
       this.ballStats.totalUsed += 1
@@ -412,14 +351,14 @@ export default {
       })
       this.showToast('记录用球 +1', 'success')
     },
-    
+
     // 页面跳转
     goToAssessment() {
       uni.navigateTo({
         url: '/pages/assessment/assessment'
       })
     },
-    
+
     // 退出登录
     handleLogout() {
       uni.showModal({
@@ -433,7 +372,7 @@ export default {
         }
       })
     },
-    
+
     // Toast 提示
     showToast(msg, type = 'info') {
       this.toast = { msg, type, visible: true }
@@ -450,7 +389,11 @@ export default {
 @import '@/styles/mixins.scss';
 
 // 全局盒子模型修复 - 小程序不支持通配符选择器
-view, text, input, textarea, scroll-view {
+view,
+text,
+input,
+textarea,
+scroll-view {
   box-sizing: border-box;
 }
 
@@ -528,7 +471,7 @@ view, text, input, textarea, scroll-view {
   border-radius: 50rpx;
   box-shadow: 0 0 30rpx rgba(204, 243, 129, 0.3);
   transition: all 0.3s ease;
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -555,11 +498,11 @@ view, text, input, textarea, scroll-view {
   justify-content: center;
   border: 2rpx solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
-  
+
   &:active {
     transform: scale(0.9);
   }
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.2);
   }
@@ -721,7 +664,7 @@ view, text, input, textarea, scroll-view {
   font-weight: 900;
   color: white;
   display: block;
-  
+
   &.appreciation {
     color: $yu-brand;
   }
@@ -777,7 +720,7 @@ view, text, input, textarea, scroll-view {
   justify-content: space-between;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  
+
   &:active {
     transform: scale(0.98);
     border-color: $yu-brand;
@@ -911,7 +854,7 @@ view, text, input, textarea, scroll-view {
   justify-content: center;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  
+
   &.editing {
     border-color: $yu-brand;
   }
@@ -959,7 +902,7 @@ view, text, input, textarea, scroll-view {
   overflow: hidden;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  
+
   &:active {
     transform: scale(0.98);
   }
@@ -1013,12 +956,19 @@ view, text, input, textarea, scroll-view {
 
 /* 动画 */
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-10rpx);
   }
+
   60% {
     transform: translateY(-5rpx);
   }

@@ -15,60 +15,34 @@
         </view>
       </view>
     </view>
-    
+
     <!-- 环境背景 -->
     <view class="ambient-bg" :class="{ active: isPlaying }"></view>
-    
+
     <!-- 主内容区域 -->
     <view class="main-content" :style="{ paddingTop: headerHeight + 'px', paddingBottom: tabBarHeight + 'px' }">
       <!-- 主计时器区域 -->
       <view class="timer-section">
-        <TimerOrb 
-          :is-playing="isPlaying"
-          :is-locked="isLocked"
-          :seconds="seconds"
-          @toggle="toggleTimer"
-        />
-        
+        <TimerOrb :is-playing="isPlaying" :is-locked="isLocked" :seconds="seconds" @toggle="toggleTimer" />
+
         <!-- 实时数据 -->
         <view v-if="isPlaying" class="stats-row animate-fade-in">
-          <StatItem 
-            icon="flame"
-            label="Est. Calories"
-            :value="Math.floor(calories)"
-            type="calories"
-          />
-          
+          <StatItem icon="flame" label="Est. Calories" :value="Math.floor(calories)" type="calories" />
+
           <view class="divider"></view>
-          
-          <StatItem 
-            icon="activity"
-            label="Heart Rate"
-            :value="bpm"
-            type="bpm"
-            :intensity="intensity"
-            :clickable="true"
-            @click="toggleIntensity"
-          />
+
+          <StatItem icon="activity" label="Heart Rate" :value="bpm" type="bpm" :intensity="intensity" :clickable="true"
+            @click="toggleIntensity" />
         </view>
       </view>
-      
+
       <!-- 历史记录预览 -->
-      <HistoryPreview 
-        :records="MOCK_HISTORY"
-        @view-all="viewMode = 'HISTORY'"
-        @select="selectRecord"
-      />
+      <HistoryPreview :records="MOCK_HISTORY" @view-all="viewMode = 'HISTORY'" @select="selectRecord" />
     </view>
 
     <!-- 全屏历史记录 -->
-    <HistoryModal 
-      v-if="viewMode === 'HISTORY'"
-      :records="MOCK_HISTORY"
-      :selected="selectedRecord"
-      @close="viewMode = 'TIMER'"
-      @select="selectRecord"
-    />
+    <HistoryModal v-if="viewMode === 'HISTORY'" :records="MOCK_HISTORY" :selected="selectedRecord"
+      @close="viewMode = 'TIMER'" @select="selectRecord" />
   </view>
 </template>
 
@@ -147,10 +121,10 @@ export default {
     },
     toggleTimer() {
       if (this.isLocked) return
-      
+
       // 触觉反馈
       uni.vibrateShort({ type: 'medium' })
-      
+
       if (this.isPlaying) {
         this.pauseTimer()
       } else {
@@ -159,13 +133,13 @@ export default {
     },
     startTimer() {
       this.isPlaying = true
-      
+
       // 开始计时
       this.timerInterval = setInterval(() => {
         this.seconds++
         this.updateCalories()
       }, 1000)
-      
+
       // 开始心率模拟
       this.startBpmSimulation()
     },
@@ -201,7 +175,7 @@ export default {
     },
     toggleLock() {
       this.isLocked = !this.isLocked
-      
+
       // 触觉反馈
       uni.vibrateShort({ type: this.isLocked ? 'heavy' : 'light' })
     },
@@ -321,12 +295,12 @@ export default {
   color: rgba($yu-white, 0.7);
   transition: all $duration-normal $ease-out;
   cursor: pointer;
-  
+
   &.locked {
     background: $error;
     color: $yu-white;
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -342,7 +316,7 @@ export default {
   background: radial-gradient(circle at center, rgba($yu-brand, 0.1) 0%, transparent 70%);
   opacity: 0;
   transition: opacity $duration-slow $ease-in-out;
-  
+
   &.active {
     opacity: 1;
     animation: breathing 4s $ease-in-out infinite;

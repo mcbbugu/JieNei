@@ -1,7 +1,7 @@
 <template>
   <view class="yu-layout" :style="{ paddingTop: safeAreaTop + 'px' }">
     <slot />
-    
+
     <!-- 全局 TabBar -->
     <YuTabBar v-if="showTabBar" />
   </view>

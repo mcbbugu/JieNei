@@ -3,53 +3,29 @@
     <!-- 自定义头部 -->
     <view class="community-header">
       <view class="header-tabs">
-        <YuButton
-          v-for="tab in tabs"
-          :key="tab.key"
-          :type="activeTab === tab.key ? 'primary' : 'text'"
-          size="sm"
-          @click="switchTab(tab.key)"
-        >
+        <YuButton v-for="tab in tabs" :key="tab.key" :type="activeTab === tab.key ? 'primary' : 'text'" size="sm"
+          @click="switchTab(tab.key)">
           {{ tab.label }}
         </YuButton>
       </view>
-      
-      <YuButton
-        type="primary"
-        size="sm"
-        icon="plus"
-        round
-        @click="showCompose = true"
-      />
+
+      <YuButton type="primary" size="sm" icon="plus" round @click="showCompose = true" />
     </view>
 
     <!-- 帖子列表 -->
     <view class="community-content">
-      <scroll-view 
-        scroll-y 
-        class="post-list no-scrollbar"
-        enhanced
-        :show-scrollbar="false"
-        @scrolltolower="loadMore"
-      >
+      <scroll-view scroll-y class="post-list no-scrollbar" enhanced :show-scrollbar="false" @scrolltolower="loadMore">
         <!-- 加载状态 -->
         <view v-if="loading" class="loading-container">
           <PostSkeleton v-for="i in 3" :key="i" />
         </view>
-        
+
         <!-- 帖子列表 -->
         <view v-else class="posts-container">
-          <PostCard
-            v-for="post in posts"
-            :key="post.id"
-            :post="post"
-            @like="toggleLike"
-            @comment="openComments"
-            @share="sharePost"
-            @click="openPostDetail"
-          />
+          <PostCard v-for="post in posts" :key="post.id" :post="post" @like="toggleLike" @comment="openComments"
+            @share="sharePost" @click="openPostDetail" />
         </view>
-        
+
         <!-- 加载更多 -->
         <view v-if="hasMore" class="load-more">
           <text class="load-more-text">加载更多...</text>
@@ -58,29 +34,14 @@
     </view>
 
     <!-- 发布弹窗 -->
-    <ComposeModal
-      v-if="showCompose"
-      @close="showCompose = false"
-      @publish="handlePublish"
-    />
+    <ComposeModal v-if="showCompose" @close="showCompose = false" @publish="handlePublish" />
 
     <!-- 帖子详情 -->
-    <PostDetailModal
-      v-if="selectedPost"
-      :post="selectedPost"
-      :comments="comments"
-      @close="selectedPost = null"
-      @like="toggleLike"
-      @comment="addComment"
-    />
+    <PostDetailModal v-if="selectedPost" :post="selectedPost" :comments="comments" @close="selectedPost = null"
+      @like="toggleLike" @comment="addComment" />
 
     <!-- Toast 提示 -->
-    <YuToast 
-      v-if="toast.visible" 
-      :message="toast.msg"
-      :type="toast.type"
-      @close="toast.visible = false"
-    />
+    <YuToast v-if="toast.visible" :message="toast.msg" :type="toast.type" @close="toast.visible = false" />
   </view>
 </template>
 
@@ -189,7 +150,7 @@ export default {
       try {
         // 模拟加载延迟
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
+
         this.posts = MOCK_POSTS
         this.loading = false
       } catch (error) {
@@ -207,7 +168,7 @@ export default {
       if (index !== -1) {
         this.posts[index].isLiked = !this.posts[index].isLiked
         this.posts[index].likes += this.posts[index].isLiked ? 1 : -1
-        
+
         // 触觉反馈
         if (this.posts[index].isLiked) {
           uni.vibrateShort({ type: 'light' })
@@ -240,7 +201,7 @@ export default {
         tag: postData.topic || '日常',
         images: postData.images || []
       }
-      
+
       this.posts.unshift(newPost)
       this.showCompose = false
       this.showToast('发布成功！', 'success')
@@ -253,9 +214,9 @@ export default {
         time: '刚刚',
         avatarColor: 'brand'
       }
-      
+
       this.comments.unshift(newComment)
-      
+
       // 更新帖子评论数
       if (this.selectedPost) {
         const index = this.posts.findIndex(p => p.id === this.selectedPost.id)
@@ -263,12 +224,12 @@ export default {
           this.posts[index].comments++
         }
       }
-      
+
       this.showToast('评论成功！', 'success')
     },
     loadMore() {
       if (!this.hasMore || this.loading) return
-      
+
       // 模拟加载更多
       setTimeout(() => {
         this.hasMore = false
@@ -339,7 +300,7 @@ export default {
 .load-more {
   @include flex-center;
   padding: $spacing-xl;
-  
+
   .load-more-text {
     font-size: $font-sm;
     color: $yu-light-gray;
