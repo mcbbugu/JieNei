@@ -57,9 +57,6 @@ export default {
     handleTabClick(index) {
       if (this.currentIndex === index) return
       
-      // 震动反馈
-      uni.vibrateShort({ type: 'light' })
-      
       const targetPath = this.tabList[index].path
       
       // 使用 switchTab 跳转到 tab 页面

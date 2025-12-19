@@ -14,15 +14,75 @@
 
       <template #right>
         <view class="header-right">
+          <!-- 意图和位置显示（已发布状态时） -->
+          <view v-if="myStatus !== 'IDLE'" class="status-info" @click.stop="showPublishModal = true">
+            <view class="intent-badge" :class="getIntentBgClass(myIntent)">
+              <YuIcon :name="getIntentIcon(myIntent)" :size="24" :color="getIntentColor(myIntent)" />
+              <text class="intent-label" :style="{ color: getIntentColor(myIntent) }">
+                {{ myLocation || myVenue }}
+              </text>
+            </view>
+          </view>
+
+          <!-- 擦亮按钮（已发布状态时） -->
+          <view v-if="myStatus !== 'IDLE'" class="refresh-btn" @click.stop="handleRefreshStatus">
+            <YuIcon name="TrendingUp" :size="32" color="#1a1a1a" :class="{ 'rotating': isRefreshing }" />
+          </view>
+
+          <!-- 发布状态按钮 -->
+          <view class="status-btn-wrapper" @click.stop="handlePublishClick">
+            <view 
+              class="status-btn"
+              :class="{ 
+                idle: myStatus === 'IDLE',
+                active: myStatus !== 'IDLE',
+                [getStatusBgClass()]: myStatus !== 'IDLE'
+              }"
+            >
+              <view class="status-icon-wrapper" :class="{ active: myStatus !== 'IDLE' }">
+                <YuIcon 
+                  :name="getStatusIcon()" 
+                  :size="28" 
+                  :color="myStatus === 'IDLE' ? '#9ca3af' : getStatusIconColor()"
+                />
+              </view>
+              <text class="status-text" :class="{ active: myStatus !== 'IDLE' }">
+                {{ getStatusLabel() }}
+              </text>
+            </view>
+
+            <!-- 状态菜单 -->
+            <view v-if="showStatusMenu && myStatus !== 'IDLE'" class="status-menu" @click.stop>
+              <view class="menu-header">
+                <text class="menu-title">切换当前状态</text>
+              </view>
+
+              <!-- 状态选项 -->
+              <view 
+                v-for="status in statusOptions" 
+                :key="status.value"
+                class="menu-item"
+                :class="{ active: myStatus === status.value }"
+                @click="changeStatus(status.value)"
+              >
+                <YuIcon :name="status.icon" :size="28" :color="myStatus === status.value ? '#1a1a1a' : '#6b7280'" />
+                <text class="menu-item-text">{{ status.label }}</text>
+                <YuIcon v-if="myStatus === status.value" name="Check" :size="24" color="#ccf381" />
+              </view>
+
+              <!-- 结束状态 -->
+              <view class="menu-divider"></view>
+              <view class="menu-item end-status" @click="handleEndStatus">
+                <YuIcon name="Power" :size="28" color="#ef4444" />
+                <text class="menu-item-text danger">结束状态 (下线)</text>
+              </view>
+            </view>
+          </view>
+
           <!-- 消息按钮 -->
           <view class="message-btn" @click="showNotifications = true">
             <YuIcon name="MessageCircle" :size="40" color="#1a1a1a" />
             <view v-if="unreadCount > 0" class="badge">{{ unreadCount }}</view>
-          </view>
-
-          <!-- 发布状态按钮 -->
-          <view class="publish-btn" @click="handlePublishClick">
-            <YuIcon name="Plus" :size="40" color="#1a1a1a" />
           </view>
         </view>
       </template>
@@ -158,6 +218,15 @@
     <!-- 底部导航 -->
     <YuTabBar :current="0" />
 
+    <!-- 发布状态弹窗 -->
+    <PublishModal 
+      :visible="showPublishModal" 
+      :default-venue="myVenue"
+      :default-location="myLocation"
+      @close="showPublishModal = false"
+      @publish="handlePublish"
+    />
+
     <!-- Toast 提示 -->
     <view v-if="toast.visible" class="toast">
       <YuIcon name="Check" :size="28" color="#ccf381" />
@@ -170,6 +239,7 @@
 import YuIcon from '@/components/YuIcon/YuIcon.vue'
 import YuNavBar from '@/components/YuNavBar/YuNavBar.vue'
 import YuTabBar from '@/components/YuTabBar/YuTabBar.vue'
+import PublishModal from './components/PublishModal.vue'
 import { generatePlayers, getIntentConfig } from '@/utils/constants.js'
 
 export default {
@@ -177,7 +247,8 @@ export default {
   components: {
     YuIcon,
     YuNavBar,
-    YuTabBar
+    YuTabBar,
+    PublishModal
   },
   data() {
     return {
@@ -200,6 +271,17 @@ export default {
       myIntent: 'ANY',
       myVenue: '李宁羽毛球中心',
       myLocation: '',
+      showPublishModal: false,
+      showStatusMenu: false,
+      isRefreshing: false,
+
+      // 状态选项
+      statusOptions: [
+        { value: 'LOOKING', label: '等球来', icon: 'Zap' },
+        { value: 'PLAYING', label: '激战中', icon: 'Flame' },
+        { value: 'RESTING', label: '休息中', icon: 'Coffee' },
+        { value: 'SOCIAL', label: '交朋友', icon: 'MessageCircle' }
+      ],
 
       // UI 状态
       showNotifications: false,
@@ -330,7 +412,81 @@ export default {
 
     // 处理发布状态点击
     handlePublishClick() {
-      this.showToast('发布状态功能开发中')
+      if (this.myStatus === 'IDLE') {
+        this.showPublishModal = true
+      } else {
+        this.showStatusMenu = !this.showStatusMenu
+      }
+    },
+
+    // 处理发布
+    handlePublish(data) {
+      this.myIntent = data.intent
+      this.myVenue = data.venue
+      this.myLocation = data.location
+      this.myStatus = 'LOOKING'
+      this.showPublishModal = false
+
+      const locationText = data.location ? ` ${data.location}` : ''
+      this.showToast(`发布成功！您在 ${data.venue}${locationText}`)
+    },
+
+    // 切换状态
+    changeStatus(status) {
+      this.myStatus = status
+      this.showStatusMenu = false
+      this.showToast(`已切换到${this.statusOptions.find(s => s.value === status).label}`)
+    },
+
+    // 结束状态
+    handleEndStatus() {
+      this.myStatus = 'IDLE'
+      this.showStatusMenu = false
+      this.myLocation = ''
+      this.showToast('已结束状态，下线休息')
+    },
+
+    // 擦亮状态
+    handleRefreshStatus() {
+      this.isRefreshing = true
+      setTimeout(() => {
+        this.isRefreshing = false
+        if (this.myStatus !== 'LOOKING') {
+          this.myStatus = 'LOOKING'
+        }
+        this.showToast('状态已擦亮，重新排到前列')
+      }, 800)
+    },
+
+    // 获取状态图标
+    getStatusIcon() {
+      if (this.myStatus === 'IDLE') return 'Plus'
+      const status = this.statusOptions.find(s => s.value === this.myStatus)
+      return status ? status.icon : 'Plus'
+    },
+
+    // 获取状态标签
+    getStatusLabel() {
+      if (this.myStatus === 'IDLE') return '发布状态'
+      const status = this.statusOptions.find(s => s.value === this.myStatus)
+      return status ? status.label : '发布状态'
+    },
+
+    // 获取状态背景类
+    getStatusBgClass() {
+      switch (this.myStatus) {
+        case 'LOOKING': return 'bg-brand'
+        case 'PLAYING': return 'bg-playing'
+        case 'RESTING': return 'bg-resting'
+        case 'SOCIAL': return 'bg-social'
+        default: return ''
+      }
+    },
+
+    // 获取状态图标颜色
+    getStatusIconColor() {
+      if (this.myStatus === 'LOOKING') return '#1a1a1a'
+      return '#ffffff'
     },
 
     // 判断是否为新鲜状态
@@ -576,31 +732,250 @@ export default {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 24rpx;
+  gap: 16rpx;
   height: 100%;
-
-  // 当 YuNavBar 使用绝对定位时，这个容器会被重新定位
 }
 
-.publish-btn {
+// 意图信息显示
+.status-info {
+  display: flex;
+  align-items: center;
+  max-width: 240rpx;
+}
+
+.intent-badge {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 50rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid rgba(255, 255, 255, 0.6);
+  max-width: 100%;
+
+  &.orange-bg {
+    background: rgba(251, 146, 60, 0.1);
+  }
+
+  &.blue-bg {
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  &.green-bg {
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  &.gray-bg {
+    background: rgba(107, 114, 128, 0.1);
+  }
+}
+
+.intent-label {
+  font-size: 20rpx;
+  font-weight: 900;
+  letter-spacing: 1rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160rpx;
+}
+
+// 擦亮按钮
+.refresh-btn {
+  width: 72rpx;
+  height: 72rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64rpx;
-  height: 64rpx;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2rpx solid rgba(0, 0, 0, 0.08);
+  background: white;
+  border: 2rpx solid #ccf381;
   border-radius: 50%;
   @include shadow('sm');
   transition: all $duration-normal $ease-out;
 
   &:active {
     transform: scale(0.9);
-    background: rgba(255, 255, 255, 1);
+    background: #ccf381;
   }
 }
 
-.message-btn {
+.rotating {
+  animation: rotate 0.8s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 状态按钮包装器
+.status-btn-wrapper {
+  position: relative;
+}
+
+// 状态按钮
+.status-btn {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding-left: 16rpx;
+  padding-right: 24rpx;
+  padding-top: 12rpx;
+  padding-bottom: 12rpx;
+  border-radius: 50rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  transition: all $duration-normal $ease-out;
+
+  &.idle {
+    background: white;
+  }
+
+  &.bg-brand {
+    background: #ccf381;
+    border-color: #ccf381;
+  }
+
+  &.bg-playing {
+    background: #ef4444;
+    border-color: #ef4444;
+  }
+
+  &.bg-resting {
+    background: #9ca3af;
+    border-color: #9ca3af;
+  }
+
+  &.bg-social {
+    background: #6366f1;
+    border-color: #6366f1;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.status-icon-wrapper {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.status-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #6b7280;
+
+  &.active {
+    color: #1a1a1a;
+  }
+}
+
+.bg-brand .status-text.active {
+  color: #1a1a1a;
+}
+
+.bg-playing .status-text.active,
+.bg-resting .status-text.active,
+.bg-social .status-text.active {
+  color: white;
+}
+
+// 状态菜单
+.status-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 16rpx);
+  width: 320rpx;
+  background: white;
+  border-radius: 24rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.15);
+  border: 2rpx solid #f3f4f6;
+  padding: 12rpx;
+  z-index: 30;
+  animation: menu-slide-in 0.2s ease-out;
+}
+
+@keyframes menu-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16rpx) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menu-header {
+  padding: 24rpx 24rpx 16rpx;
+}
+
+.menu-title {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 2rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  margin-bottom: 8rpx;
+  transition: all $duration-fast $ease-out;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:active {
+    background: #f9fafb;
+  }
+
+  &.active {
+    background: #f3f4f6;
+  }
+
+  &.end-status:active {
+    background: #fef2f2;
+  }
+}
+
+.menu-item-text {
+  flex: 1;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #6b7280;
+
+  &.danger {
+    color: #ef4444;
+  }
+}
+
+.menu-divider {
+  height: 2rpx;
+  background: #f3f4f6;
+  margin: 8rpx 0;
+}
+
+// 消息按钮
   position: relative;
   display: flex;
   align-items: center;
