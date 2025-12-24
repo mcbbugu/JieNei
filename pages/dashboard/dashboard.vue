@@ -20,7 +20,7 @@
         <view class="header-right">
           <!-- 擦亮按钮（恢复原始尺寸） -->
           <view v-if="myStatus !== 'IDLE'" class="refresh-btn" @click.stop="handleRefreshStatus">
-            <YuIcon name="TrendingUp" :size="32" color="#1a1a1a" :class="{ 'rotating': isRefreshing }" />
+            <YuIcon name="Zap" :size="28" color="#1a1a1a" :class="{ 'rotating': isRefreshing }" />
           </view>
 
           <!-- 发布状态按钮（恢复原始尺寸） -->
@@ -259,7 +259,7 @@ export default {
 
       // 状态选项
       statusOptions: [
-        { value: 'LOOKING', label: '等球来', icon: 'Zap' },
+        { value: 'LOOKING', label: '等球来', icon: 'Clock' },
         { value: 'PLAYING', label: '激战中', icon: 'Flame' },
         { value: 'RESTING', label: '休息中', icon: 'Coffee' },
         { value: 'SOCIAL', label: '交朋友', icon: 'MessageCircle' }
@@ -769,8 +769,8 @@ export default {
 
 // 擦亮按钮
 .refresh-btn {
-  width: 72rpx;
-  height: 72rpx;
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -779,6 +779,7 @@ export default {
   border-radius: 50%;
   @include shadow('sm');
   transition: all $duration-normal $ease-out;
+  box-sizing: border-box;
 
   &:active {
     transform: scale(0.9);
@@ -837,6 +838,14 @@ export default {
   transition: all 0.2s ease;
   flex-shrink: 0;
 
+  // 确保图标和文字垂直对齐
+  .yu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
   &:active {
     transform: scale(0.95);
     background: rgba(255, 255, 255, 0.95);
@@ -869,6 +878,9 @@ export default {
   font-weight: 700;
   color: #9ca3af;
   white-space: nowrap;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 
   &.active {
     color: #1a1a1a;
