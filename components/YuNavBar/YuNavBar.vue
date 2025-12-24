@@ -87,20 +87,29 @@ export default {
       const style = {
         paddingTop: this.safeAreaTop + 'px',
         // 缩短过渡时间，使滚动响应更灵敏
-        transition: 'background 0.1s ease, backdrop-filter 0.1s ease, border-bottom 0.1s ease'
+        transition: 'background-color 0.2s ease, border-bottom-color 0.2s ease'
       }
       
       if (!this.transparent) {
         // 非透明模式，保持原样
-        style.background = this.backgroundColor
-        style.backdropFilter = 'blur(20px)'
+        style.backgroundColor = this.backgroundColor
         style.borderBottom = '1px solid rgba(0, 0, 0, 0.05)'
       } else {
         // 透明模式下，始终根据 scrollOpacity 计算背景
-        // 这样可以确保即使 opacity 为 0 也能正确应用（即完全透明）
-        style.background = `rgba(255, 255, 255, ${this.scrollOpacity * 0.95})`
-        style.backdropFilter = `blur(${this.scrollOpacity * 20}px)`
-        style.borderBottom = `1px solid rgba(0, 0, 0, ${this.scrollOpacity * 0.05})`
+        // 保持毛玻璃效果：背景不透明度适中，保持半透明
+        const bgOpacity = this.scrollOpacity * 0.6  // 最大 60% 不透明度，更透明的毛玻璃效果
+        const borderOpacity = this.scrollOpacity * 0.03  // 降低边框透明度，与透明背景更协调
+        
+        // 使用半透明白色背景模拟毛玻璃效果
+        style.backgroundColor = `rgba(255, 255, 255, ${bgOpacity})`
+        style.borderBottom = `1px solid rgba(0, 0, 0, ${borderOpacity})`
+        
+        // 始终应用 backdrop-filter 以增强毛玻璃效果
+        const blurAmount = Math.max(this.scrollOpacity * 20, 0)
+        if (blurAmount > 0) {
+          style.backdropFilter = `blur(${blurAmount}px)`
+          style.webkitBackdropFilter = `blur(${blurAmount}px)`
+        }
       }
       
       if (!this.fixed) {
@@ -221,12 +230,8 @@ export default {
   left: 0;
   right: 0;
   z-index: 100;
-  
-  &.transparent {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border-bottom: none !important;
-  }
+  // 移除 transparent 类的强制样式，让动态样式能够生效
+  // 背景和边框通过内联样式动态控制
 }
 
 .navbar-content {

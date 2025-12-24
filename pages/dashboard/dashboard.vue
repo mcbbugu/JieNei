@@ -4,7 +4,11 @@
     <YuNavBar :transparent="true" :scroll-opacity="navOpacity" @safe-area-info="handleSafeAreaInfo">
       <template #left>
         <view class="header-left">
-          <text class="title">附近局</text>
+          <!-- 第一行：标题和按钮在同一行 -->
+          <view class="header-top-row">
+            <text class="title">界内</text>
+          </view>
+          <!-- 第二行：副标题单独一行 -->
           <view class="subtitle-row">
             <text class="subtitle">{{ loading ? '定位场馆中...' : `发现 ${displayPlayers.length} 位 1km 内球友` }}</text>
             <view v-if="!loading" class="status-dot"></view>
@@ -14,22 +18,12 @@
 
       <template #right>
         <view class="header-right">
-          <!-- 意图和位置显示（已发布状态时） -->
-          <view v-if="myStatus !== 'IDLE'" class="status-info" @click.stop="showPublishModal = true">
-            <view class="intent-badge" :class="getIntentBgClass(myIntent)">
-              <YuIcon :name="getIntentIcon(myIntent)" :size="24" :color="getIntentColor(myIntent)" />
-              <text class="intent-label" :style="{ color: getIntentColor(myIntent) }">
-                {{ myLocation || myVenue }}
-              </text>
-            </view>
-          </view>
-
-          <!-- 擦亮按钮（已发布状态时） -->
+          <!-- 擦亮按钮（恢复原始尺寸） -->
           <view v-if="myStatus !== 'IDLE'" class="refresh-btn" @click.stop="handleRefreshStatus">
             <YuIcon name="TrendingUp" :size="32" color="#1a1a1a" :class="{ 'rotating': isRefreshing }" />
           </view>
 
-          <!-- 发布状态按钮 -->
+          <!-- 发布状态按钮（恢复原始尺寸） -->
           <view class="status-btn-wrapper">
             <view 
               class="status-btn"
@@ -40,8 +34,8 @@
               }"
               @click="handlePublishClick"
             >
-              <YuIcon name="Plus" :size="32" color="#1a1a1a" />
-              <text class="status-text">发布状态</text>
+              <YuIcon :name="getStatusIcon()" :size="28" :color="getStatusIconColor()" />
+              <text class="status-text">{{ getStatusLabel() }}</text>
             </view>
 
             <!-- 状态菜单 -->
@@ -72,11 +66,6 @@
             </view>
           </view>
 
-          <!-- 消息按钮 -->
-          <view class="message-btn" @click="showNotifications = true">
-            <YuIcon name="MessageCircle" :size="40" color="#1a1a1a" />
-            <view v-if="unreadCount > 0" class="badge">{{ unreadCount }}</view>
-          </view>
         </view>
       </template>
     </YuNavBar>
@@ -95,7 +84,7 @@
             </view>
 
             <!-- 场馆列表 -->
-            <view v-for="([venueName, count], idx) in venueStats" :key="venueName" class="venue-item"
+            <view v-for="([venueName, count]) in venueStats" :key="venueName" class="venue-item"
               :class="{ active: activeFilter === `Venue:${venueName}` }" @click="setVenueFilter(venueName)">
               <text class="venue-name">{{ venueName }}</text>
               <text class="venue-count">{{ count }}</text>
@@ -277,12 +266,7 @@ export default {
       ],
 
       // UI 状态
-      showNotifications: false,
       selectedPlayer: null,
-
-      // 消息状态
-      notifications: [],
-      unreadCount: 1,
 
       // Toast 状态
       toast: {
@@ -312,11 +296,12 @@ export default {
 
   onPageScroll(e) {
     // 计算导航栏透明度
-    const scrollTop = e.scrollTop
-    // 滚动 0-60px 之间产生渐变
-    const opacity = Math.min(Math.max(scrollTop / 60, 0), 1)
+    const scrollTop = e.scrollTop || 0
+    // 滚动 0-40px 之间产生渐变，让毛玻璃效果更早出现
+    const opacity = Math.min(Math.max(scrollTop / 40, 0), 1)
     this.navOpacity = opacity
-    // console.log('滚动监听:', scrollTop, opacity)
+    // 调试日志（开发时可以取消注释）
+    // console.log('滚动监听:', { scrollTop, opacity, navOpacity: this.navOpacity })
   },
 
   methods: {
@@ -481,6 +466,7 @@ export default {
 
     // 获取状态图标颜色
     getStatusIconColor() {
+      if (this.myStatus === 'IDLE') return '#9ca3af'
       if (this.myStatus === 'LOOKING') return '#1a1a1a'
       return '#ffffff'
     },
@@ -578,57 +564,6 @@ export default {
       )
     },
 
-    // 处理发布状态点击
-    handlePublishClick() {
-      if (this.myStatus === 'IDLE') {
-        this.showPublishSheet = true
-      } else {
-        // 显示状态菜单或其他操作
-        this.showToast('点击擦亮按钮可以刷新状态', 'info')
-      }
-    },
-
-    // 确认发布状态
-    confirmPublish(intent) {
-      if (!this.myVenue) {
-        this.showToast('请先选择或输入所在球馆', 'warning')
-        return
-      }
-
-      this.myIntent = intent
-      this.myStatus = 'LOOKING'
-      this.showPublishSheet = false
-
-      this.showToast(
-        `发布成功！您在 ${this.myVenue} ${this.myLocation || ''}`,
-        'success'
-      )
-    },
-
-    // 擦亮状态
-    handleRefreshStatus() {
-      this.isRefreshing = true
-
-      setTimeout(() => {
-        this.isRefreshing = false
-        if (this.myStatus !== 'LOOKING') {
-          this.myStatus = 'LOOKING'
-        }
-        this.showToast('状态已擦亮，重新排到前列', 'success')
-      }, 800)
-    },
-
-    // 处理通知选择
-    handleNotificationSelect(notification) {
-      // 标记为已读
-      this.notifications = this.notifications.map(n =>
-        n.id === notification.id ? { ...n, isRead: true } : n
-      )
-      this.unreadCount = this.notifications.filter(n => !n.isRead).length
-
-      // 显示相关球友信息
-      this.showToast(`查看 ${notification.fromUser} 的信息`, 'info')
-    },
 
     // 发送邀请
     sendInvite(player, signal) {
@@ -693,6 +628,15 @@ export default {
 // 自定义头部内容样式
 .header-left {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  min-height: 60rpx;
 }
 
 .title {
@@ -702,13 +646,14 @@ export default {
   font-style: italic;
   letter-spacing: -2rpx;
   display: block;
-  margin-bottom: 8rpx;
+  line-height: 1;
 }
 
 .subtitle-row {
   display: flex;
   align-items: center;
   gap: 8rpx;
+  margin-top: 4rpx;
 }
 
 .subtitle {
@@ -728,8 +673,9 @@ export default {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 8rpx;
   height: 100%;
+  flex-wrap: nowrap;
 }
 
 // 意图信息显示
@@ -737,6 +683,51 @@ export default {
   display: flex;
   align-items: center;
   max-width: 240rpx;
+}
+
+// 紧凑版意图信息（仅在菜单打开时显示）
+.status-info-compact {
+  display: flex;
+  align-items: center;
+  max-width: 180rpx;
+  margin-right: 4rpx;
+}
+
+.intent-badge-compact {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid rgba(255, 255, 255, 0.6);
+  max-width: 100%;
+
+  &.orange-bg {
+    background: rgba(251, 146, 60, 0.1);
+  }
+
+  &.blue-bg {
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  &.green-bg {
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  &.gray-bg {
+    background: rgba(107, 114, 128, 0.1);
+  }
+}
+
+.intent-label-compact {
+  font-size: 18rpx;
+  font-weight: 900;
+  letter-spacing: 0.5rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120rpx;
 }
 
 .intent-badge {
@@ -795,6 +786,26 @@ export default {
   }
 }
 
+// 紧凑版擦亮按钮
+.refresh-btn-compact {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2rpx solid #ccf381;
+  border-radius: 50%;
+  @include shadow('sm');
+  transition: all $duration-normal $ease-out;
+  flex-shrink: 0;
+
+  &:active {
+    transform: scale(0.9);
+    background: #ccf381;
+  }
+}
+
 .rotating {
   animation: rotate 0.8s linear infinite;
 }
@@ -824,11 +835,13 @@ export default {
   border-radius: 50rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:active {
     transform: scale(0.95);
     background: rgba(255, 255, 255, 0.95);
   }
+
 
   &.active.bg-brand {
     background: #ccf381;
@@ -855,6 +868,7 @@ export default {
   font-size: 24rpx;
   font-weight: 700;
   color: #9ca3af;
+  white-space: nowrap;
 
   &.active {
     color: #1a1a1a;
@@ -953,6 +967,7 @@ export default {
 }
 
 // 消息按钮
+.message-btn {
   position: relative;
   display: flex;
   align-items: center;
@@ -964,6 +979,27 @@ export default {
   border-radius: 50%;
   @include shadow('sm');
   transition: all $duration-normal $ease-out;
+
+  &:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 1);
+  }
+}
+
+// 紧凑版消息按钮
+.message-btn-compact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  @include shadow('sm');
+  transition: all $duration-normal $ease-out;
+  flex-shrink: 0;
 
   &:active {
     transform: scale(0.9);
@@ -989,10 +1025,26 @@ export default {
   box-shadow: 0 2rpx 8rpx rgba(239, 68, 68, 0.3);
 }
 
-// 主要内容区域
-.main-content {
-  // 动态设置 padding，通过 :style 绑定
+.badge-compact {
+  position: absolute;
+  top: -6rpx;
+  right: -6rpx;
+  min-width: 28rpx;
+  height: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ef4444;
+  color: white;
+  font-size: 18rpx;
+  font-weight: 900;
+  border-radius: 50%;
+  border: 3rpx solid #f3f4f6;
+  box-shadow: 0 2rpx 6rpx rgba(239, 68, 68, 0.3);
 }
+
+// 主要内容区域
+// padding 通过 :style 动态设置，无需在此定义
 
 // 场馆区域
 .venue-section {
